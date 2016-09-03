@@ -1,0 +1,25 @@
+current status right now: 
+	updating ui. post operations, comment box, comments toggle stuff
+	fixing all the noticed bugs since dev release and adding the missing features
+
+next steps: 
+	fix bugs:
+		
+	add missing features:
+		enter radius manually
+		show radius units
+		ui toggle for comment expand/collapse
+		
+	refine the UI overall
+	
+	
+	go through and do all the error handling
+
+
+	bootstrap inputgroups
+
+	
+to be thinking about: 
+	i think i will keep the app working this way (with js and php) until i get to a point where it can be used effectively by the small group of clubs at ISU. 
+	when things get more complex i think i will have to switch to django. 
+	i should make some detailed documentation for this app to send to people who are interested in it. also to open source it when the time comes. 

@@ -1,0 +1,582 @@
+var posts;
+var COMMENT_UPDATE_TIME = 900000; //time in milliseconds until a set of comments is no longer considered fresh
+var postTemplateHTML; //template of a post 
+var query = {}; //the user's search query (radius, tags, users)
+var locationNotFound; //boolean. 
+var user = {};
+var makePostBoxHTML;
+var userLoginBoxHTML;
+var commentsTemplateHTML;
+var commentTemplateHTML;
+var masterCommentList = []; //array of all comments. all of them are on the same level
+
+function initFeed(){
+
+	commentsTemplateHTML = document.getElementsByClassName("comments")[0].innerHTML;
+	commentTemplateHTML = document.getElementById("cId").outerHTML; 
+	document.getElementsByClassName("comments")[0].innerHTML = "";
+
+	postTemplateHTML = document.getElementById("feed").innerHTML;
+	document.getElementById("feed").innerHTML = "";
+
+	userLoginBoxHTML = document.getElementById("userAccessBox").innerHTML;
+
+	getUserLocation();
+	
+}
+
+function initMakePost(){
+	userLoginBoxHTML = document.getElementById("userAccessBox").innerHTML;
+	getUserLocation();
+	
+	document.getElementById("buttonLogin").addEventListener("click", function(){ //TODO i should probably think of a better way to do this ui updating stuff
+		var i;
+		while(i < 10000000){
+			if (user.id){
+				updateMakePostUI();
+				i = 10000000;
+			}
+			i++; 
+		}
+		
+	});
+	
+	updateMakePostUI();
+	
+	//TODO CURRENTLY dealing with what is presented to user to fix their input
+}
+
+function getUserLocation(){
+	navigator.geolocation.getCurrentPosition(foundLocation, noLocation);
+}
+function foundLocation(position){
+	user.lat = position.coords.latitude;
+	user.lon = position.coords.longitude;
+}
+function noLocation(){
+	location = null;
+	locationNotFound = true;
+}
+function updateSearchQuery(){
+	query.r = document.getElementById("r").value;
+	query.tags = document.getElementById("tags_get").value.split(" ");
+	query.users = document.getElementById("users").value.split(" ");
+
+	requestPosts();
+}
+
+function requestPosts(){ //make a query for posts and displays them in the feed
+		
+				document.getElementById("feed").innerHTML = null;
+				
+				var jsonObj = {"lat": user.lat, "lon": user.lon, "r": query.r, "tags": query.tags, "users": query.users};
+				
+				var str_json = JSON.stringify(jsonObj);
+				
+				
+				xhr = new XMLHttpRequest();
+				var url = "postRetriever.php?str_json=" + str_json;
+				xhr.open("GET", url, true);
+				xhr.setRequestHeader("Content-type", "application/json");
+				xhr.onreadystatechange = function(){
+					if (xhr.readyState == 4 && xhr.status == 200){
+						posts = JSON.parse(xhr.responseText);
+
+						var i;
+						document.getElementById("feed").innerHTML += url;
+						for (i = 0; i < posts.length; i++){
+							var p = posts[i];
+							p.comments = [];
+							p.commentsHidden = true;
+							p.lastCommentUpdateTime = null; //last time the comments for this post were requested
+							addPostToFeed(p);
+						}
+						
+					}
+				}
+				xhr.send();				
+}
+
+function makePost(){ //uploads a post to the server
+
+	//document.getElementById("makePostResponse").innerHTML = null;
+
+	var title = document.getElementById("title").value;
+	var text = document.getElementById("text").value;
+	var anon = document.getElementById("anon").checked;
+	var tags = document.getElementById("tags_post").value.split(" ");
+	var files = document.getElementById("files_in").files;
+
+	var finalFiles = [];
+	var i;
+	for (i = 0; i < files.length; i++){
+		if (files[i].size > 256000000) {
+			continue;
+		} else if (files[i].name.length > 144) {
+			continue;
+		} else {
+			finalFiles.push(files[i]);
+		}
+	}
+	
+	var form = new FormData();
+	for (i = 0; i < finalFiles.length; i++){
+		form.append("files_in[]", finalFiles[i]);
+	}
+	
+	if (!title){
+		alert("You must make a title");
+		return;
+	} 
+	if (!text){
+		alert("You must write some words");
+		return;
+	}
+	if (tags == ""){
+		alert("You must pick at least one tag");
+		return;
+	} 
+
+	var jsonObj = {"title": title, "text": text, "lat": user.lat, "lon": user.lon, "anon": anon, "tags": tags};
+	var jsonStr = JSON.stringify(jsonObj);
+	form.append("str_json", jsonStr);
+	
+	xhr = new XMLHttpRequest();
+	var url = "postAdder.php";
+	xhr.open("POST", url, true);
+	//xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	xhr.onreadystatechange = function(){ 
+		if (xhr.readyState == 4 && xhr.status == 200){
+			//document.getElementById("makePostResponse").innerHTML += url;
+		
+			//document.getElementById("makePostResponse").innerHTML += "\n" + xhr.responseText;
+
+			document.getElementById("makePostBox").innerHTML = "<center><h4>Thank you for your post.</h4></center>";
+		}
+	}
+	xhr.send(form);
+		
+}
+
+function makeComment(pId, parent){ //uploads a comment to the server (post id, parent id which is 0 if the parent is the post itself)
+
+	var text = document.getElementById("cIn-p" + pId).value;
+	var postId = pId;
+	var parentId = parent;
+	var anon = document.getElementById("anon").checked;
+	
+
+	var jsonObj = {"text": text, "lat": user.lat, "lon": user.lon, "postId": postId, "parentId": parentId, "anon": anon};
+	var jsonStr = JSON.stringify(jsonObj);
+
+	xhr = new XMLHttpRequest();
+	var url = "commentAdder.php";
+	document.getElementById("feed").innerHTML = url;
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	xhr.onreadystatechange = function(){
+		if (xhr.readyState == 4 && xhr.status == 200){
+			alert(xhr.responseText);
+		}
+	}
+	xhr.send("str_json=" + jsonStr);
+}
+
+function userLogin(){
+
+	user.name = document.getElementById("username").value;
+	var password = document.getElementById("pass1").value;
+
+	xhr = new XMLHttpRequest();
+	var url = "login.php";
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	xhr.onreadystatechange = function(){
+		if (xhr.readyState == 4 && xhr.status == 200){
+			json = JSON.parse(xhr.responseText);
+			
+			if (json.success == 1){
+				user.id = json.id;
+				user.email = json.email;
+				user.bio = json.bio;
+
+				document.getElementById("userAccessBox").innerHTML = "<h3>" + user.name + "</h3> <button type = 'submit' onclick = 'userLogout()'>Log Out</button>";
+			} else {
+				alert(json.msg);
+			}
+		}
+	}
+	xhr.send("username=" + user.name + "&password=" + password);
+
+}
+
+function userLogout(){
+	xhr = new XMLHttpRequest();
+	var url = "logout.php";
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	xhr.onreadystatechange = function(){
+		if (xhr.readyState == 4 && xhr.status == 200){
+			document.getElementById("userAccessBox").innerHTML = userLoginBoxHTML;
+		}
+	}
+	xhr.send();
+}
+
+function userRegister(pass1){
+	
+
+	if (!pass1){
+		username = document.getElementById("username").value;
+		password = document.getElementById("pass1").value;
+	
+		document.getElementById("userAccessTitle").innerHTML = "Register";
+	
+	
+		if (password == ""){
+			alert("Enter a password");
+			return;
+		}
+		if (username == ""){
+			alert("Enter a username");
+			return;
+		}
+
+		$("#userAccessBox li:eq(0)").html("Verify Password <input style = 'padding: 4px;' type = 'password' id = 'pass2' />");
+		$("#userAccessBox li:eq(1)").html("Email (optional) <input style = 'padding: 4px;' type = 'text' id = 'email' /><button onclick = \"userRegister('" + password + "')\">Register</button>");
+		
+	} else {
+		
+		if (document.getElementById("pass2").value === pass1){
+			email = document.getElementById("email").value;
+			var pass2 = document.getElementById("pass2").value;
+			
+			xhr = new XMLHttpRequest();
+			var url = "register_user.php";
+			xhr.open("POST", url, true);
+			xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			xhr.onreadystatechange = function(){
+				if (xhr.readyState == 4 && xhr.status == 200){
+
+
+					var jsonResponse = JSON.parse(xhr.responseText);
+
+					if (jsonResponse.success == 1){
+						document.getElementById("userAccessBox").innerHTML = "<h4>You are logged in. Would you like to <a href = '#' onclick = 'makeBioBox()'><b>create a bio?</b></a></h4>";
+						user.id = jsonResponse.userId;
+						setUser(user.id);
+					} else {
+						document.getElementById("userAccessBox").innerHTML = "<h4>Something went wrong. Try again.</h4>";
+					}
+				} else {
+					
+				}
+			}
+			xhr.send("username=" + username + "&password=" + pass1 + "&pass2=" + pass2+"&email="+email + "&lat=" + user.lat + "&lon=" + user.lon);
+		} else { 
+			alert("passwords don't match. try again");
+		}
+	}
+	
+}
+
+function makeBioBox(){ //writes the html for bio input box
+	document.getElementById("userAccessBox").innerHTML = "<textarea cols = '50' rows = '3' id = 'bioIn'></textarea>"
+															+ "<br><button type = 'submit' onclick = 'submitBio()'>Submit Bio</button>";
+}
+
+function submitBio(){
+	user.bio = document.getElementById("bioIn").value;
+
+	xhr = new XMLHttpRequest();
+	var url = "updateUserData.php"
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	xhr.onreadystatechange = function(){
+		if (xhr.readyState == 4 && xhr.status == 200){
+			document.getElementById("userAccessBox").innerHTML = "<h3>" + user.name + "</h3> <button onclick = 'userLogout()'>Log Out</button>";
+		}
+	}
+	xhr.send("bio=" + user.bio);
+}
+
+function setUser(id){
+	xhr = new XMLHttpRequest();
+	var url = "getUserById.php?id=" + id;
+	xhr.open("GET", url, true);
+	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	xhr.onreadystatechange = function(){
+		if (xhr.readyState == 4 && xhr.status == 200){
+			json = JSON.parse(xhr.responseText);
+			user.name = json.name;
+			user.bio = json.bio;
+			user.email = json.email;
+		}
+	}
+	xhr.send();
+}
+
+function showPostComments(pId){
+
+	var p = postOfId(pId);
+	if (p.comments == null){
+		//get comments from server
+	}
+	var i;
+	for(i = 0; i < p.comments.length; i++){
+		p.comments[i].hidden = false;
+	}
+	//TODO analyze this process further
+}
+
+function showComments(parentId, objectId){
+	if (parentId){
+		document.getElementById("c" + objectId).getElementsByClassName("comments")[0].style.visibility = "visible";
+	} else {
+		document.getElementById("p" + objectId).getElementsByClassName("comments")[0].style.visibility = "visible";
+	}
+}
+function hideComments(parentId, objectId){
+	if (parentId != -1){
+		document.getElementById("c" + objectId).getElementsByClassName("comments")[0].innerHTML = "";
+	} else {
+		document.getElementById("p" + objectId).getElementsByClassName("comments")[0].innerHTML = "";
+	}
+}
+
+
+function toggleCommentsView(parentId, objectId){ //parentId is -1 for post (objectId is postId), 0 for comment of post, or parentId for comment of comment (objectId is commentId); 
+	var o; //to represent either a post or a comment
+	alert(parentId + " " + objectId);
+	if (parentId == -1){ //we are trying to toggle the view of the comments of a post
+		o = postOfId(objectId);
+	} else { //it is a comment
+		o = commentOfId(objectId);
+	}
+
+	
+
+	if (o.commentsHidden){
+
+		curTime = (new Date()).getTime();
+		if (o.lastCommentTime == null || curTime - o.lastCommentTime > COMMENT_UPDATE_TIME ){ 
+			getComments(parentId, objectId);
+			//added to feed in getComments()
+			
+			o.commentsHidden = false;
+			
+			
+		} else { //comments are fresh
+			var i;
+			for (i = 0; i < o.comments.length; i++){
+				addCommentToFeed(o.comments[i]);
+			}
+			o.commentsHidden = false;
+		}
+	} else {
+		o.commentsHidden = true;
+		hideComments(parentId, objectId);
+	}
+}
+
+function toggleMakePostBox(){
+	if (document.getElementById("makePostBox").innerHTML){
+		document.getElementById("makePostBox").innerHTML = "";
+	} else {
+		document.getElementById("makePostBox").innerHTML = makePostBoxHTML;
+	}
+}
+
+function getComments(parentId, objectId){ //gets comments from php script and puts them in json object
+	xhr = new XMLHttpRequest();
+	var url, o;
+	if (parentId != -1){
+		o = commentOfId(objectId);
+		url = 	"commentRetriever.php?parentId=" + objectId + "&postId=" + parentId;
+	} else {
+		o = postOfId(objectId);
+		url = 	"commentRetriever.php?parentId=0&postId=" + objectId;
+	}
+	xhr.open("GET", url, true);
+	xhr.onreadystatechange = function(){
+		if (xhr.readyState == 4 && xhr.status == 200){
+			
+			responseComments = JSON.parse(xhr.responseText);
+			var i;
+
+			if (o.comments.length == responseComments.length){ //no new comments
+				for (i = 0; i < o.comments.length; i++){
+					addCommentToFeed(o.comments[i]);
+				}
+				return;
+			}
+
+			
+			o.comments = responseComments;
+			for (i = 0; i < o.comments.length; i++){
+				o.comments[i].commentsHidden = true;
+				o.comments[i].comments = [];
+				addCommentToFeed(o.comments[i]);
+				masterCommentList.push(o.comments[i]);
+			}
+			o.lastCommentTime = (new Date()).getTime();
+
+			
+		}
+	}
+	xhr.send();
+
+}
+
+function addPostToFeed(p){
+	var feed = document.getElementById("feed");
+	feed.style.visibility = "hidden"; 
+	
+	feed.innerHTML += postTemplateHTML;
+	document.getElementById("pId").id = "p" + p.id;
+	
+	var post = document.getElementById("p" + p.id);
+	post.getElementsByClassName("postTitle")[0].innerHTML = p.title;
+	if (p.userId){
+		post.getElementsByClassName("stamp")[0].innerHTML = p.time + " -- " + p.userName;
+	} else {
+		post.getElementsByClassName("stamp")[0].innerHTML = p.time;
+	}
+	post.getElementsByClassName("postText")[0].innerHTML = p.text;
+	
+	if (p.hasFile == 1){
+		var i;
+		for (i = 0; i < p.files.length; i++){
+			filename = p.files[i];
+			displayname = filename.slice(16); //cutting off the timestamp at the beginning
+			post.getElementsByClassName("postFiles")[0].innerHTML += "<a href = 'files/" + filename + "' >" + displayname + "</a><br>";
+		}
+	}
+	
+	var i;
+	for (i = 0; i < p.tags.length; i++){ 
+		if (query.tags.indexOf(p.tags[i]) == -1){ //currently not in user's search query
+			post.getElementsByClassName("postTags")[0].innerHTML += "<div class = 'tag' onclick = 'addTagToQuery(\"" + p.tags[i] + "\");'>" + p.tags[i] + " +</div>";
+		} else {
+			post.getElementsByClassName("postTags")[0].innerHTML += "<div class = 'tag' onclick = 'removeTagFromQuery(\"" + p.tags[i] + "\");'>" + p.tags[i] + " -</div>";
+		}
+		 
+	}
+	
+
+	document.getElementById("cIn-pId").id = "cIn-p" + p.id;
+	document.getElementById("button-cIn-pId").id = "button-cIn-p" + p.id;
+	document.getElementById("button-cIn-p" + p.id).setAttribute("onclick", "makeComment(" + p.id + ", 0)");
+	
+	document.getElementById("commentToggle-pIdoId").id = "commentToggle-p0o" + p.id;
+	document.getElementById("commentToggle-p0o" + p.id).setAttribute("onclick", "toggleCommentsView(-1, " + p.id + ")");
+	
+	
+	feed.style.visibility = "visible";
+	
+}
+
+function addTagToQuery(tag){
+	query.tags.push(tag);
+	requestPosts();	
+}
+
+function removeTagFromQuery(tag){
+	index = query.tags.indexOf(tag);
+	if (index > -1){
+		query.tags.splice(index, 1);
+	}
+	requestPosts(); //TODO there is obviously no need to query the server again, just set the posts as hidden
+}
+
+function addCommentToFeed(c){
+
+	if (c.parentId != 0){ //TODO fix this shit. it might be fixed now. 
+		document.getElementById("c" + c.id).getElementsByClassName("comments")[0].innerHTML += commentTemplateHTML;
+	} else {
+		document.getElementById("p" + c.postId).getElementsByClassName("comments")[0].innerHTML += commentTemplateHTML;
+	}
+	
+
+	var commentForm = "<form onsubmit = 'return false'> " 
+						+	"<input type = 'text' id = 'cIn-p" + c.parentId + "'>"
+						+ 	"<button type = 'submit' onclick = 'makeComment(" + c.parentId + ", " + c.postId + ")'>Post Comment</button>"
+					+	"</form>";
+
+	document.getElementById("cId").id = "c" + c.id;
+	comment = document.getElementById("c" + c.id);
+	comment.getElementsByClassName("commentText")[0].innerHTML = c.text;
+	comment.getElementsByClassName("stamp")[0].innerHTML = c.time + " - " + c.userId;
+
+	document.getElementById("button-cIn-cId").id = "button-cIn-c" + c.id;
+	document.getElementById("button-cIn-c" + c.id).setAttribute("onclick", "makeComment(" + c.postId + ", " + c.id + ")");
+
+	document.getElementById("commentToggle-pIdoId").id = "commentToggle-p" + c.parentId + "o" + c.id;
+	document.getElementById("commentToggle-p" + c.parentId + "o" + c.id).setAttribute("onclick", "toggleCommentsView(" + c.parentId + ", " + c.id + ")");
+}
+
+function postOfId(id){
+	var i;
+	for (i = 0; i < posts.length; i++){
+		if (posts[i].id == id){
+			return posts[i];
+		}
+	}
+	return null;
+}
+
+function commentOfId(cId){ //TODO test this function. make sure it works
+    var i;
+	for (i = 0; i < masterCommentList.length; i++){
+		if (masterCommentList[i].id == cId){
+			tempComment = masterCommentList[i];
+
+			var j;
+			if (tempComment.parentId == 0){
+				p = postOfId(tempComment.postId);
+				
+				for (j = 0; j < p.comments.length; j++){
+					if (p.comments[j].id == cId){
+						return p.comments[j];
+					}
+				}
+			} else {
+				parentComment = commentOfId(tempComment.parentId);
+				for (j = 0; j < parentComment.comments.length; j++){
+					if (parentComment.comments[j].id == cId){
+						return parentComment.comments[j];
+					}
+				}
+			}
+
+		}
+	}
+	return null;
+}
+
+function fileInputChanged(){
+	var files = document.getElementById("files_in").files;
+
+	var i;
+	for (i = 0; i < files.length; i++){
+		if (files[i].size > 256000000) {
+			alert(files[i].name + " is too big. it will not be uploaded");
+		} else if (files[i].name.length > 144) {
+			alert(files[i].name + " has too long of a name. it will not be uploaded");
+		} else {
+			
+		}
+	}
+}
+
+function updateMakePostUI(){ //this function is to modify text in a little panel to tell user what input they need to fix to make a successful post
+	var errorPanel = document.getElementById("makePostErrors");
+
+	if (user.id){
+		errorPanel.innerHTML = "you are currently posting as " + user.name;
+		document.getElementById("anonCheckBox").innerHTML = "Posting as anonymous? <input type = 'checkbox' id = 'anon' />"
+	} else {
+		errorPanel.innerHTML = "you are currently posting as anonymous";
+		document.getElementById("anonCheckBox").innerHTML = "";
+	}
+}

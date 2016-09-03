@@ -1,0 +1,9 @@
+requesting comments
+		have post object in javascript that has comments within it
+		come up with a good system for indexing comments and comment inputs
+		
+
+right now all the comment view shit is pretty messy i think. i'll need to work through it and make it work well
+	
+
+to think about: toggleCommentsView() function. should it be in view? or stay in main? it is in main because it deals with the model of the comments (boolean object.commentsHidden), and it makes calls to view functions when necessary. 

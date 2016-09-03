@@ -1,0 +1,19 @@
+interactive user input interfaces. tells the user what files are too big, suggests tags, etc
+
+making post:
+	show user:
+		who they are posting as
+		what fields they still need to fill
+	
+	
+broadcasting system:
+	each ui element anounces when an event has occured on it or data being represented has changed
+	
+user panel:
+	it has different states: no user logged in, user logged in, user trying to register (enter password again and email), user registered (show make bio box)
+
+sorting posts in feed:
+	popularity (upvote points)
+	distance
+	time
+	

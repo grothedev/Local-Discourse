@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+	
+	<link href = "css/bootstrap.css" rel = "stylesheet">
+	<link href = "css/style.css" rel = "stylesheet">
+
+	<?php
+		include('navbar.html');
+	?>
+	
+	<script src = "js/jquery.js" ></script>
+	<script type = "text/javascript" src = "js/main.js" async></script>
+	<script type = "text/javascript" src = "js/inputIndex.js" async></script>
+	<script type = "text/javascript" src = "js/viewIndex.js" async></script>
+	<script type = "text/javascript" src = "js/viewNavbar.js" async></script>
+	<script type = "text/javascript" src = "js/inputNavbar.js" async></script>
+	
+	
+
+	<div class = "container">
+		<div class = "row">
+			<div class = "col-md-3">
+				<form onsubmit = "return false">
+					<center><h4>Search for posts</h4></center>
+					
+					<div class = "input-group ">
+						<div class = "input-group-btn">
+							<button type = "button" class = "btn btn-default dropdown-toggle" data-toggle = "dropdown" 
+								aria-haspopup = "true" aria-expanded = "false">Miles<span class = "caret"></span></button>
+							<ul class = "dropdown-menu">
+								<li><a href = "#">Kilometers</a></li>
+							</ul>
+						</div>
+						<span class "input-group-addon" id = "sizing-addon1">Radius</span>
+						
+						<input type = "text" class = "form-control" placeholder = "10" aria-label = "radius-input">
+						
+					</div>
+					
+					<ul style = "list-style-type:none" >
+						<li>Radius: <font id = "shownRadius">5</font><input type = "range" value = "5" min = "1" max = "100" id = "r" onmousemove = "inputIndexRadiusChanged()" /></li>
+						<li>Tags <font size = "1px">(separated by spaces<br> type '*' to include all tags)</font><input type = "text" id = "tags_get" /></li>
+						<li>Users <font size = "1px">(separated by spaces)</font><input type = "text" id = "users" /></li>
+					</ul>
+					<center><button type = "submit" name = "queryForPosts" onclick = "inputSearchQuery()" >Search</button></center>
+				</form>
+				<br><br>
+				
+				<br>
+			</div>
+
+
+			<div class = "col-md-9">
+				
+				<div id = "feed">
+
+					<div class = "post" id = "pId">
+							
+							<div class = "postTitle">
+
+							</div>
+
+							<div class = "stamp">
+
+							</div>
+
+							<div class = "postText">
+
+							</div>
+		
+							<font>Attached Files:</font>
+							<div class = "postFiles">
+								
+							</div>
+							<div class = "postTags">
+							</div>
+							<br>
+							
+							
+							<div class = "commentBox">
+
+								<form onsubmit = "return false">
+									Make a reply: <br><textarea cols = "25" rows = "2" id = "cIn-pId"></textarea>
+									<br><button id = "button-cIn-pId" type = "submit">Reply</button>
+								</form>
+
+							</div>
+							
+							<div class = "commentToggleButton" id = "commentToggle-pIdoId" onclick = "toggleCommentsView(pId, oId)"> 
+								Expand/Collapse Comments
+							</div>
+							<br>
+							________ _____ ___ __ _ _._ _ __ ___ _____ ________
+							<br>
+							<div class = "comments">
+							
+								<div class = "comment" id = "cId" >
+									<div class = "commentText"></div>
+									<div class = "stamp"></div>
+									
+									<div class = "commentBox">
+										<form onsubmit = "return false">
+											<font size = "1px">Make a reply: </font><br><textarea rows = "2" cols = "25" id = "cIn-cId"></textarea>
+											<br><button type = "submit" onclick = "makeComment(pId, cId);" id = "button-cIn-cId">Reply</button>
+										</form>
+									</div>
+									<div class = "commentToggleButton" id = "commentToggle-pIdoId" onclick = "toggleCommentsView(pId, oId)"> 
+										Expand/Collapse Comments
+									</div>
+									<br>
+									_____ ___ __ _ _ _ _ __ ___ _____ 
+
+									<div class = "comments"></div>
+							
+								</div>			
+
+							</div>
+
+					</div>
+				</div>
+			</div>
+
+		</div>
+		
+
+	
+	</div>
+
+
+	
+
+	<body onload = 'init(<?php echo $_GET["str_json"]; ?>)'></body>
+	
+	
+
+	
+</html>
+
+	

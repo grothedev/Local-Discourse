@@ -1,0 +1,9 @@
+documentation:
+
+	postRetriever.php
+		input: JSON object as string
+			{double lat, double lon,int r,string-array tags}
+		output: JSON array of posts as string
+			[{int 0, int id, int 1, int userId, string 2,string time,string 3,string title,string 4,string text,double 5,double lat, double 6, double lon}]
+			(there is a duplicate for each value idk why)
+

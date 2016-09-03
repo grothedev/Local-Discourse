@@ -1,0 +1,11 @@
+url system:
+
+in DB:
+	url
+		id
+		url
+		time added
+		
+	postUrlIndex
+		urlId
+		postId

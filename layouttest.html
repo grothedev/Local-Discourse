@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+	
+	<?php
+		include('navbar.html');
+	?>
+
+	<link href = "css/bootstrap.css" rel = "stylesheet" />
+	<link href = "css/style.css" rel = "stylesheet" />
+	<script src = "js/jquery.js" > </script>
+	<script src = "js/viewIndex.js"></script>
+	<script type = "text/javascript">
+	
+		
+		function init(){
+			$('.postClickBox').click(function(){
+				$('.postExtra').slideToggle(120);
+			})
+		}
+		
+	</script>
+
+	<body onload = "init()" >
+		<div class = "container">
+			<div class = "row">
+				<div class = "col-md-12" id = "feed">
+				
+					
+					
+				
+				
+					<div class = "post" id = "p23">
+						
+						<div class = "postClickBox">
+							<div class = "postTitle">
+								Discussion on Free Will
+							</div>
+							
+							<div class = "postStamp">
+								Ross 2016/8/30
+							</div>
+							
+							<div class = "postText">
+								What is free will? Do we have it? This post is associated with a Wake Up discussion.
+							</div>
+
+						</div>
+						
+						<div class = "postExtra">
+							
+							<div class = "postTags">
+								<font size = "x-small">Tags:</font>
+								<div class = "tag">WakeUpISU -</div>
+								<div class = "tag">philosophy +</div>
+							</div>
+							
+							<div class = "postFiles">
+								<font>Attached Files: <a href = "freewill.pdf">freewill.pdf</a></font>
+							</div>
+							
+							<div class = "postOperations">
+								<a href = "#" onclick = "viewShowCommentBox()">Reply</a>
+							</div>
+							
+							
+								<div class = "commentBox">
+
+									<form onsubmit = "return false">
+										Make a reply: <br><textarea height = "50%" id = "cIn-p23"></textarea>
+										<br><button type = "submit" onclick = "makeComment(23, 0);">Reply</button>
+									</form>
+
+								</div>
+						
+							<center> _____ ___ __ _ _ _ _ __ ___ _____ </center>
+							
+							<div class = "comments">
+						
+							<div class = "comment" id = "p23c1">
+								<div class = "stamp">Thomas 2016/8/30</div>
+								<div class = "commentText">When considering free will, what is it that is doing the choosing?</div>
+								
+								<div class = "commentBox">
+									<form onsubmit = "return false">
+										Make a reply: <br><textarea height = "50%" id = "cIn-c1"></textarea>
+										<br><button type = "submit" onclick = "makeComment(23, 1);">Reply</button>
+									</form>
+								</div>
+							
+								
+
+								<div class = "comments"></div>
+						
+							</div>			
+
+						</div>
+							
+						</div>
+
+						<center>________ _____ ___ __ _ _._ _ __ ___ _____ ________</center>
+						
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</body>
+</html>

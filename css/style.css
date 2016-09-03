@@ -1,0 +1,57 @@
+
+body{
+	background: #cecece;
+}
+
+.commentBox{
+	display: none;
+}
+
+#userAccessBox{
+	float: right;
+	padding: 8px;
+}
+
+.navbar *{
+	color: #9d9d9d;
+	font-family: monospace;
+}
+
+.navbar button{
+	color: black;
+}
+
+a {
+	text-decoration: none;
+	color: black;
+}
+
+.postOperations{
+	font-size: 10px;
+}
+
+a:hover{
+	text-decoration: none;
+	color: #9d9d9d;
+}
+
+#makePostBox li{
+	padding: 2px;
+}
+
+li {
+	padding: 2px;
+}
+
+.commentToggleButton{
+	size: large;
+}
+
+.comments{
+	
+}
+
+.comment{
+	padding-left: 2%;
+	border-left: 1px inset;
+}

@@ -1,0 +1,63 @@
+<div class = "post" id = "pId">
+							
+	<div class = "postClickBox">
+	
+		<div class = "postTitle"></div>
+	
+		<div class = "stamp"></div>
+
+		<div class = "postText"></div>
+	</div>
+	
+	<div class = "postExtra">
+	
+		<div class = "postTags">
+		</div>
+	
+		<div class = "postFiles">		
+		</div>
+	
+		<div class = "postOperations">
+			<a id = "reply" href = "#" onclick "viewShowCommentBox()">Reply</a>
+		</div>
+	
+		<div class = "commentBox">
+
+			<form onsubmit = "return false">
+				Make a reply: <br><textarea cols = "25" rows = "2" id = "cIn-pId"></textarea>
+				<br><button id = "button-cIn-pId" type = "submit">Reply</button>
+			</form>
+			
+			<center>________ _____ ___ __ _ _._ _ __ ___ _____ ________</center>
+			
+			
+		</div>
+	
+		<div class = "comments">
+	
+			<div class = "comment" id = "cId" >
+				<div class = "commentText"></div>
+				<div class = "stamp"></div>
+				
+				<div class = "commentBox">
+					<form onsubmit = "return false">
+						<font size = "1px">Make a reply: </font><br><textarea rows = "2" cols = "25" id = "cIn-cId"></textarea>
+						<br><button type = "submit" onclick = "makeComment(pId, cId);" id = "button-cIn-cId">Reply</button>
+					</form>
+				</div>
+				<div class = "commentToggleButton" id = "commentToggle-pIdoId" onclick = "toggleCommentsView(pId, oId)"> 
+					Expand/Collapse Comments
+				</div>
+				<br>
+				_____ ___ __ _ _ _ _ __ ___ _____ 
+
+				<div class = "comments"></div>
+		
+			</div>			
+
+		</div>
+
+	
+	</div>
+						
+</div>
