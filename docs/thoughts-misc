@@ -2,7 +2,3 @@ tags can be used as
 	content descriptor 
 	content type (narrative, project proposition, random question, hypothesis, poetry, etc.)
 	targeted user?
-
-
-i think it might be a bad idea to create the entire system in javascript. i could make it out of java
-look at django or google app engine

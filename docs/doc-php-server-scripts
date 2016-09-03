@@ -1,4 +1,6 @@
-documentation:
+API for the server scripts. Incomplete
+
+
 
 	postRetriever.php
 		input: JSON object as string

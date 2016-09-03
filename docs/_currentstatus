@@ -6,9 +6,9 @@ next steps:
 	fix bugs:
 		
 	add missing features:
-		enter radius manually
 		show radius units
 		ui toggle for comment expand/collapse
+		voting (still need to think about how this will work. if it will be simple up/down vote, or more complex)
 		
 	refine the UI overall
 	
@@ -16,10 +16,5 @@ next steps:
 	go through and do all the error handling
 
 
-	bootstrap inputgroups
 
-	
-to be thinking about: 
-	i think i will keep the app working this way (with js and php) until i get to a point where it can be used effectively by the small group of clubs at ISU. 
-	when things get more complex i think i will have to switch to django. 
-	i should make some detailed documentation for this app to send to people who are interested in it. also to open source it when the time comes. 
+
