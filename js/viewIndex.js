@@ -9,6 +9,7 @@ var commentTemplateHTML; //the comment div which is a comment
 var shownRadius;
 
 function initView(){ 
+	
 	commentsTemplateHTML = document.getElementsByClassName("comments")[0].innerHTML;
 	commentTemplateHTML = document.getElementById("cId").outerHTML; //i don't remember why this is outer html
 	//document.getElementsByClassName("comments")[0].innerHTML = "";
