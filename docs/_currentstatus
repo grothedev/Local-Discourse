@@ -2,6 +2,11 @@ current status right now:
 	updating ui. post operations, comment box, comments toggle stuff
 	fixing all the noticed bugs since dev release and adding the missing features
 
+
+	things to fix
+		when click on tags, don't collapse post
+	
+
 next steps: 
 	fix bugs:
 		

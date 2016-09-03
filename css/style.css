@@ -3,6 +3,46 @@ body{
 	background: #cecece;
 }
 
+.post{
+	
+	border: 1px groove;
+	display: none;
+	margin: 2px;
+	padding: 10px;
+}
+
+.postStamp{
+	padding-left: 5px;
+	display: inline-block;
+	font-size: 10px;
+	opacity: 0.8;
+	
+}
+
+.postClickBox {
+	cursor: pointer;
+}
+
+.commentClickBox {
+	cursor: pointer;
+}
+
+.commentStamp{
+	font-size: 8px;
+	opacity: 0.8;
+}
+
+.commentText{
+	display: inline-block;
+	padding-left: 2px;
+}
+
+.postFiles{
+	font-size: 80%;
+	padding-left: 10px;
+	display: none;
+}
+
 .commentBox{
 	display: none;
 }
@@ -48,10 +88,27 @@ li {
 }
 
 .comments{
-	
+	padding: 15px;
+	display: none;
 }
 
 .comment{
-	padding-left: 2%;
-	border-left: 1px inset;
+	padding-left: 15px;
+	border-left: 1px groove;
+	display: none;
+}
+
+.reply{
+	cursor: pointer;
+	font-size: 8px;
+}
+
+.postOperations {
+	padding-left: 15px;
+	padding-top: 5px;
+	display: inline-block;
+}
+
+.commentBox {
+	padding-left: 20px;
 }

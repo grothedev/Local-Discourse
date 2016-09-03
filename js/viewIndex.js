@@ -19,11 +19,6 @@ function initView(){
 	initNavbarView();
 	
 	shownRadius = document.getElementById("shownRadius");
-	
-
-	$('.postTitle').click(function(){
-		$('.postExtra').toggle(200);
-	})
 
 	
 }
@@ -40,16 +35,17 @@ function viewAddPostToFeed(p){ //add post p to the feed
 	
 	var post = document.getElementById("p" + p.id);
 	post.getElementsByClassName("postTitle")[0].innerHTML = p.title;
-	post.style.display = "inline"; 
+	post.style.display = "block"; 
 	
 	if (p.userId){
-		post.getElementsByClassName("stamp")[0].innerHTML = p.time + " -- " + p.userName + " -- " + p.lat + ", " + p.lon;
+		post.getElementsByClassName("postStamp")[0].innerHTML = p.time + " -- " + p.userName + " -- " + p.lat + ", " + p.lon;
 	} else {
-		post.getElementsByClassName("stamp")[0].innerHTML = p.time +  " -- " + p.lat + ", " + p.lon;
+		post.getElementsByClassName("postStamp")[0].innerHTML = p.time +  " -- " + p.lat + ", " + p.lon;
 	}
 	post.getElementsByClassName("postText")[0].innerHTML = p.text;
 	
 	if (p.hasFile == 1){
+		$("#p" + p.id + " .postFiles").show();
 		var i;
 		for (i = 0; i < p.files.length; i++){
 			filename = p.files[i];
@@ -75,13 +71,11 @@ function viewAddPostToFeed(p){ //add post p to the feed
 	document.getElementById("button-cIn-p" + p.id).setAttribute("onclick", "inputMakeComment(" + p.id + ", 0)");
 	
 	post.getElementsByClassName("postClickBox")[0].setAttribute("onclick", "toggleCommentsView( -1, " + p.id + ")");
+
+	post.getElementsByClassName("reply")[0].setAttribute("onclick", "viewToggleCommentBox(-1, " + p.id + ")" );
 	
-	
-	$('#' + p.Id + ' .postExtra .postOperations #reply').click(function(){
-		viewToggleCommentBox(-1, pId);
-	});
-	document.getElementById("commentToggle-pIdoId").id = "commentToggle-p0o" + p.id;
-	document.getElementById("commentToggle-p0o" + p.id).setAttribute("onclick", "toggleCommentsView(-1, " + p.id + ")");
+	//document.getElementById("commentToggle-pIdoId").id = "commentToggle-p0o" + p.id;
+	//document.getElementById("commentToggle-p0o" + p.id).setAttribute("onclick", "toggleCommentsView(-1, " + p.id + ")");
 
 	
 	feed.style.visibility = "visible";
@@ -102,16 +96,19 @@ function viewAddCommentToFeed(c){
 
 	document.getElementById("cId").id = "c" + c.id;
 	comment = document.getElementById("c" + c.id);
-	comment.style.display = "inline";
+	comment.style.display = "block";
 	comment.getElementsByClassName("commentText")[0].innerHTML = c.text;
-	comment.getElementsByClassName("stamp")[0].innerHTML = c.time + " - " + c.userId;
+	comment.getElementsByClassName("commentStamp")[0].innerHTML = c.time + " - " + c.userId;
 	document.getElementById("cIn-cId").id = "cIn-c" + c.id;
 
 	document.getElementById("button-cIn-cId").id = "button-cIn-c" + c.id;
 	document.getElementById("button-cIn-c" + c.id).setAttribute("onclick", "inputMakeComment(" + c.postId + ", " + c.id + ")");
 
-	document.getElementById("commentToggle-pIdoId").id = "commentToggle-p" + c.parentId + "o" + c.id;
-	document.getElementById("commentToggle-p" + c.parentId + "o" + c.id).setAttribute("onclick", "toggleCommentsView(" + c.parentId + ", " + c.id + ")");
+	comment.getElementsByClassName("commentClickBox")[0].setAttribute("onclick", "toggleCommentsView(" + c.parentId + ", " + c.id + ")" );
+	comment.getElementsByClassName("reply")[0].setAttribute("onclick", "viewToggleCommentBox(" + c.parentId + ", " + c.id + ")" );
+
+	//document.getElementById("commentToggle-pIdoId").id = "commentToggle-p" + c.parentId + "o" + c.id;
+	//document.getElementById("commentToggle-p" + c.parentId + "o" + c.id).setAttribute("onclick", "toggleCommentsView(" + c.parentId + ", " + c.id + ")");
 }
 
 function viewClearFeed(){
@@ -143,13 +140,12 @@ function viewToggleCommentBox(parentId, objectId){
 	
 	if (parentId == -1){ //we are trying to toggle the reply box for a post
 		o = postOfId(objectId);
-		
-		$('#p' + o.id + '.commentBox').toggle();
-		
-		alert("t");
+		$('#p' + o.id + ' .postExtra > .commentBox').toggle(120);
 		
 	} else { //it is a comment
 		o = commentOfId(objectId);
+		$("#c" + o.id + " > .commentBox").toggle(120);
+		
 	}
 	
 }

@@ -87,6 +87,7 @@ function requestPosts(){ //gets posts from server and populates the post array
 							viewAddPostToFeed(p);
 						}
 						
+						
 					}
 				}
 				xhr.send();				
@@ -128,9 +129,11 @@ function toggleCommentsView(parentId, objectId){ //parentId is -1 for post (obje
 
 	if (parentId == -1){ //we are trying to toggle the view of the comments of a post
 		o = postOfId(objectId);
-		document.getElementById("p" + objectId).getElementsByClassName("postExtra")[0].style.display = "inline";
+		$("#p" + objectId + " .postExtra").toggle(120);
+		$("#p" + objectId + " .postExtra > .comments").toggle(120);
 	} else { //it is a comment
 		o = commentOfId(objectId);
+		$("#c" + objectId + " > .comments").toggle(120);
 	}
 	
 	if (o.commentsHidden){
@@ -228,7 +231,7 @@ function postOfId(id){
 	return null;
 }
 
-function commentOfId(cId){ //TODO test this function. make sure it works
+function commentOfId(cId){ 
     var i;
 	for (i = 0; i < masterCommentList.length; i++){
 		if (masterCommentList[i].id == cId){

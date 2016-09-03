@@ -16,7 +16,7 @@
 	<script type = "text/javascript" src = "js/inputNavbar.js" async></script>
 	<script src = "js/bootstrap.min.js"></script>
 	
-	<body onload = "init()"></body>
+	<body onload = 'init(<?php echo $_GET["str_json"]; ?>)'></body>
 	
 	<div class = "container">
 		<div class = "row">
