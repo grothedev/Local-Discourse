@@ -1,19 +1,35 @@
 <form onsubmit = "return false">
 	<center><h4>Search for posts</h4></center>
-					
-		<div class="input-group">
-		  <input type="text" class="form-control" aria-label="..." id = "r">
-		  <div class="input-group-btn">
-			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick = "setRMi()">Miles <span class="caret"></span></button>
-			<ul class="dropdown-menu dropdown-menu-right">
-			  <li><a href="#" onclick = "setRKm()">Kilometers</a></li>
-			</ul>
-		  </div><!-- /btn-group -->
-		</div><!-- /input-group -->
-					
-		<ul style = "list-style-type:none" >
-			<li>Tags <font size = "1px">(separated by spaces<br> type '*' to include all tags)</font><input type = "text" id = "tags_get" /></li>
-			<li>Users <font size = "1px">(separated by spaces)</font><input type = "text" id = "users" /></li>
+			
+		<ul style = "list-style-type: none;" >
+			<li>
+				Radius			
+				<input type="text" id = "r" value = "10">
+				<select>
+					<option>Miles</option>
+					<option>Kilometers</option>
+				</select> 
+			</li>
+				
+			<li>
+				Tags <font size = "1px">Press enter to add tag<br></font><input type = "text" id = "tags_get" />
+				<label><input type = "checkbox" id = "all_tags" /> Include all tags </label>
+			</li>
+				
+			<li>
+				Users <font size = "1px">(separated by spaces)</font><input type = "text" id = "users" />
+			</li>
 		</ul>
+			
+		
+		
 		<center><button type = "submit" name = "queryForPosts" onclick = "inputSearchQuery()" >Search</button></center>
 </form>
+
+<div id = "searchStatus">
+	Tags included in current search:
+	<div id = "includedTags"></div>
+	
+	Users include in current search:
+	<div id = "includedUsers"></div>
+</div>

@@ -77,7 +77,7 @@ function requestPosts(){ //gets posts from server and populates the post array
 
 						var i;
 						
-						viewClearFeed();
+						//viewClearFeed();
 						
 						for (i = 0; i < posts.length; i++){
 							var p = posts[i];

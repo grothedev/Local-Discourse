@@ -94,6 +94,7 @@ li {
 
 .comment{
 	padding-left: 15px;
+	padding-bottom: 4px;
 	border-left: 1px groove;
 	display: none;
 }
